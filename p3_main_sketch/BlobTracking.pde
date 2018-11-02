@@ -45,6 +45,7 @@ class BlobTracking {
     for (Blob b : tracker.blobs) {
       if (b.sizeOfBlob() > 750) {
         b.display();
+        b.calcFeatures();
       }
     }
   }// end bracket method
