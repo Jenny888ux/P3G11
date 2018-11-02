@@ -1,7 +1,12 @@
 import KinectPV2.*;
+import oscP5.*;
+import netP5.*;
 
 KinectPV2 kinect;
 BlobTracking tracker;
+
+NetAddress pureData;
+OscP5 oscP5;
 
 float distanceThreshold, colorThreshold;
 
@@ -14,6 +19,10 @@ int totalTime;
 
 void setup() {
   size(1024, 424);
+  
+  oscP5 = new OscP5(this,12000);
+  pureData = new NetAddress("localhost",8000);
+  
   tracker = new BlobTracking();
   kinect = new KinectPV2(this);
   savedTime = millis();

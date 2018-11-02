@@ -78,4 +78,12 @@ class Blob {
   public float getWidth(){
     return bWidth;
   }
+  
+  public void sendPureData(){
+    OscMessage msg = new OscMessage("test");
+    msg.add(bWidth);
+    msg.add(bHeight);
+    oscP5.send(msg, pureData);
+    
+  }
 }
