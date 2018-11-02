@@ -1,12 +1,12 @@
 class BlobTracking {
 
-  ArrayList<Blob> blobs = new ArrayList<Blob>();
+  private ArrayList<Blob> blobs = new ArrayList<Blob>();
 
 
-  BlobTracking() {
+  public BlobTracking() {
   }
 
-  void tracking(PImage image) {
+  public void tracking(PImage image) {
 
     
     image.updatePixels();
@@ -40,7 +40,7 @@ class BlobTracking {
     }
   }// end bracket method
 
-  void displayOnCondition() {
+  public void displayOnCondition() {
     //loop through the blobs and check the condition and display those who met it.
     for (Blob b : tracker.blobs) {
       if (b.sizeOfBlob() > 750) {
@@ -49,7 +49,7 @@ class BlobTracking {
     }
   }// end bracket method
 
-  boolean compareRedColor(float tempColor) {
+  public boolean compareRedColor(float tempColor) {
     //simple color comparer taht returns true if the color are red
     float track = red(trackColor);
     if (tempColor == track) {

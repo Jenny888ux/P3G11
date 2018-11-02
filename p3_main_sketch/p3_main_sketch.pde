@@ -68,7 +68,7 @@ void mouseClicked() {
   print("Meter away from camera: " + depthLookUpTable(j));
 }
 
-boolean timer(){
+public boolean timer(){
   int passedTime = millis() - savedTime;
   if (passedTime > totalTime) {
     savedTime = millis();
@@ -77,12 +77,12 @@ boolean timer(){
     return false;
   }
 }
-void frameRate(){
+public void frameRate(){
   text("Frame Rate: " + int(frameRate), 25, 25);
   //println(frameRate);
 }
 
-void Threshold(int threshold_min, int threshold_max, int kw, int kh) {
+public void Threshold(int threshold_min, int threshold_max, int kw, int kh) {
   display = createImage(kw, kh, RGB);
   //display.loadPixels();
 
@@ -102,7 +102,7 @@ void Threshold(int threshold_min, int threshold_max, int kw, int kh) {
   //display.updatePixels();
 }
 
-float depthLookUpTable(int index) {
+public float depthLookUpTable(int index) {
   float[] depthLookUp = new float[5500];
   for (int i = 0; i < depthLookUp.length; i++) {
     depthLookUp[i] = rawDepthToMeters(i);
@@ -110,19 +110,14 @@ float depthLookUpTable(int index) {
   return depthLookUp[index];
 }
 
-float rawDepthToMeters(int depthValue) {
+public float rawDepthToMeters(int depthValue) {
   if (depthValue < 5499) {
     return (float)(1.0 / ((double)(depthValue) * -0.0030711016 + 3.3309495161));
   }
   return 0.0f;
 }
 
-float distBetween(float x1, float y1, float z1, float x2, float y2, float z2) {
-  float d = (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) +(z2-z1)*(z2-z1);
-  return d;
-}
-
-float distBetween(float x1, float y1, float x2, float y2) {
+public float distBetween(float x1, float y1, float x2, float y2) {
   float d = (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1);
   return d;
 }
