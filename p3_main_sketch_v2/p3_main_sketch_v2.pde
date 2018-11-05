@@ -1,11 +1,14 @@
+import gab.opencv.*;
 import KinectPV2.*;
 import oscP5.*;
 import netP5.*;
+
 
 KinectPV2 kinect;
 
 NetAddress pureData;
 OscP5 oscP5;
+OpenCV OCV;
 
 float distanceThreshold, colorThreshold;
 
@@ -14,21 +17,24 @@ int depth[];
 color trackColor;
 
 void setup(){
-  size(1024, 424);
+  size(512, 424);
   
   oscP5 = new OscP5(this,12000);
   pureData = new NetAddress("localhost",8000);
   
   kinect = new KinectPV2(this);
-
+  
   kinect.enableDepthImg(true);
   kinect.init();
   trackColor = color(255, 0, 0);
+  
+  OCV = new OpenCV(this,512/2,424/2);
 }
 
 void draw(){
   depth = kinect.getRawDepthData();
   depthImage = kinect.getDepthImage();
+  OCV.loadImage(depthImage);
 
   // Being overly cautious here
   if (depth == null && depthImage == null) {
@@ -42,12 +48,16 @@ void draw(){
   
   
   
+  
   //PImage blobtrackingImage = display.copy();
 
   
   //image(blobtrackingImage, 512, 0, 512, 424);
-  PImage grayImage = createImage(512,424, RGB);
-  image(grayImage,512, 0, 512, 424);
+  
+  
+  
+  OCV.flip(OpenCV.HORIZONTAL);
+  
   
 }
 
