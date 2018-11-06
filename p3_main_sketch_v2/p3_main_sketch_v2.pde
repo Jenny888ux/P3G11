@@ -184,8 +184,8 @@ void soundOnCondition(float widthOfBlob,float heightOfBlob){
   float m2 = map(widthOfBlob, 0, 424, 0.1f, 3.5f);
   rate = m2;
   
-  delay(100);
+  
   file.amp(amp);
   file.rate(rate);
-  delay(100);
+  
 }
