@@ -38,7 +38,7 @@ void setup() {
   BlobDetection.setThreshold(1f);
   
   //sound
-  file = new SoundFile(this, "sound.wav");
+  file = new SoundFile(this, "sound1.wav");
   file.loop();
 }
 
