@@ -42,23 +42,19 @@ void draw() {
     return;
   }
   // threshold min max  kinect width kinect height
-  Threshold(500, 2000, 512, 424);
+  Threshold(1000, 2000, 512, 424);
 
 
   image(display, 0, 0, 512, 424);
 
   PImage BlobImage = display;
-
-
   pushMatrix();
   translate(512, 0);
 
   BlobDetection.computeBlobs(BlobImage.pixels);
 
   image(display, 0, 0, 512, 424);
-  drawBlobsAndEdges(true);
-
-
+  drawBlobs(true);
   popMatrix();
 }
 
@@ -68,8 +64,6 @@ void mouseClicked() {
   int j = depth[i];
   print("Meter away from camera: " + depthLookUpTable(j));
 }
-
-
 
 public void Threshold(int threshold_min, int threshold_max, int kw, int kh) {
   display = createImage(kw, kh, RGB);
@@ -107,8 +101,8 @@ public float rawDepthToMeters(int depthValue) {
   return 0.0f;
 }
 
-void drawBlobsAndEdges(boolean drawBlobs)
-{
+void drawBlobs(boolean drawBlobs) {
+
   noFill();
   ArrayList<Blob> blobs = new ArrayList<Blob>();
   for (int n = 0; n < BlobDetection.getBlobNb(); n++)
@@ -118,23 +112,23 @@ void drawBlobsAndEdges(boolean drawBlobs)
 
   Blob biggestBlob = null;
   ArrayList<Blob> blobsOfSize = arrayListofBlobs(blobs, 20000);
-
   if (blobsOfSize != null) {
-    for (Blob b : blobsOfSize) {
-      biggestBlob = biggestblob(b);
+  for (Blob b : blobsOfSize){
+     biggestBlob = biggestblob(b);
+    }
+  }
+  
+  if(biggestBlob != null) {
+      // Blobs
+      if (drawBlobs) {
+        //println(area);
+        strokeWeight(2);
+        stroke(255, 0, 0);
+        rect(biggestBlob.xMin*512, biggestBlob.yMin*424, biggestBlob.w*512, biggestBlob.h*424);
+      }
     }
   }
 
-  if (biggestBlob != null) {
-    // Blobs
-    if (drawBlobs)
-    {
-      strokeWeight(4);
-      stroke(255, 0, 0);
-      rect(biggestBlob.xMin*512, biggestBlob.yMin*424, biggestBlob.w*512, biggestBlob.h*424);
-    }
-  }
-}
 
 ArrayList<Blob> arrayListofBlobs(ArrayList<Blob> blobs_, int size) {
   ArrayList<Blob> blobsOfSize = new ArrayList<Blob>();
