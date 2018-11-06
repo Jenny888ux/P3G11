@@ -1,26 +1,33 @@
 import blobDetection.*;
 import KinectPV2.*;
+import processing.sound.*;
+
 //import oscP5.*;
-//import netP5.*;
+
+
+SoundFile file;
+float amp;
+float rate;
 
 
 KinectPV2 kinect;
 BlobDetection BlobDetection;
 
-//NetAddress pureData;
 //OscP5 oscP5;
 
 float distanceThreshold, colorThreshold;
 
 PImage display, depthImage;
 int depth[];
-
+int widthOfWindow, heightOfWindow;
 void setup() {
-  size(1024, 424);
-
+  size(512, 424);
+  widthOfWindow = 512;
+  heightOfWindow = 424;
   //oscP5 = new OscP5(this,12000);
   //pureData = new NetAddress("localhost",8000);
 
+  //kinect
   kinect = new KinectPV2(this);
   kinect.enableDepthImg(true);
   kinect.init();
@@ -29,6 +36,10 @@ void setup() {
   BlobDetection = new BlobDetection(512, 424);
   BlobDetection.setPosDiscrimination(false);
   BlobDetection.setThreshold(1f);
+  
+  //sound
+  file = new SoundFile(this, "sound.wav");
+  file.loop();
 }
 
 void draw() {
@@ -44,28 +55,29 @@ void draw() {
   // threshold min max  kinect width kinect height
   Threshold(500, 2000, 512, 424);
 
-
-  image(display, 0, 0, 512, 424);
+  //image(display, 0, 0, 1024, 848);
 
   PImage BlobImage = display;
 
 
   pushMatrix();
-  translate(512, 0);
+  translate(0, 0);
 
   BlobDetection.computeBlobs(BlobImage.pixels);
 
-  image(display, 0, 0, 512, 424);
+  image(display, 0, 0, widthOfWindow, heightOfWindow);
   drawBlobsAndEdges(true);
 
-
   popMatrix();
+  
 }
 
 void mouseClicked() {
-  int i = mouseX + mouseY*512;
-  println(depth[i]);
-  int j = depth[i];
+  float i = mouseX + mouseY*widthOfWindow;
+  float i2 = map(i,0, 868, 0, 217);
+  
+  println(depth[int(i2)]);
+  int j = depth[int(i2)];
   print("Meter away from camera: " + depthLookUpTable(j));
 }
 
@@ -75,9 +87,9 @@ public void Threshold(int threshold_min, int threshold_max, int kw, int kh) {
   display = createImage(kw, kh, RGB);
   //display.loadPixels();
 
-  for (int x = 0; x < kw; x++) {
+  for (int x = 1; x < kw-1; x++) {
 
-    for (int y = 1; y <kh; y++) {
+    for (int y = 1; y <kh-1; y++) {
 
       int index = x + y * kw;
       if (depth[index] > threshold_min && depth[index] < threshold_max) {
@@ -131,8 +143,9 @@ void drawBlobsAndEdges(boolean drawBlobs)
     {
       strokeWeight(4);
       stroke(255, 0, 0);
-      rect(biggestBlob.xMin*512, biggestBlob.yMin*424, biggestBlob.w*512, biggestBlob.h*424);
-    }
+      rect(biggestBlob.xMin*widthOfWindow, biggestBlob.yMin*heightOfWindow, biggestBlob.w*widthOfWindow, biggestBlob.h*heightOfWindow);
+      soundOnCondition(biggestBlob.w*widthOfWindow,biggestBlob.h*heightOfWindow);
+  }
   }
 }
 
@@ -160,4 +173,19 @@ Blob biggestblob(Blob b) {
     return BiggestBlob;
   }
   return null;
+}
+
+void soundOnCondition(float widthOfBlob,float heightOfBlob){
+  //float widthofk = map(widthOfBlob, 0,1024,0,512);
+  //float heightofk = map(heightOfBlob,0,848,0,424);
+  
+  float m1 = map(heightOfBlob, 150, 450, 0, 1);
+  amp = m1;
+  float m2 = map(widthOfBlob, 0, 424, 0.1f, 3.5f);
+  rate = m2;
+  
+  delay(100);
+  file.amp(amp);
+  file.rate(rate);
+  delay(100);
 }
