@@ -20,6 +20,7 @@ float distanceThreshold, colorThreshold;
 PImage display, depthImage;
 int depth[];
 int widthOfWindow, heightOfWindow;
+ArrayList<PVector> points;
 void setup() {
   size(512, 424);
   widthOfWindow = 512;
@@ -40,9 +41,11 @@ void setup() {
   //sound
   file = new SoundFile(this, "sound1.wav");
   file.loop();
+  points = new ArrayList<PVector>();
 }
 
 void draw() {
+  background(0);
   depth = kinect.getRawDepthData();
   depthImage = kinect.getDepthImage();
 
@@ -53,7 +56,7 @@ void draw() {
     return;
   }
   // threshold min max  kinect width kinect height
-  Threshold(500, 2000, 512, 424);
+  Threshold(1500, 3000, 512, 424);
 
   //image(display, 0, 0, 1024, 848);
 
@@ -65,9 +68,10 @@ void draw() {
 
   BlobDetection.computeBlobs(BlobImage.pixels);
 
-  image(display, 0, 0, widthOfWindow, heightOfWindow);
+  //image(display, 0, 0, widthOfWindow, heightOfWindow);
   drawBlobsAndEdges(true, true);
-
+  
+  println(points.size());
   popMatrix();
 }
 
@@ -121,7 +125,7 @@ public float rawDepthToMeters(int depthValue) {
 void drawBlobsAndEdges(boolean drawBlobs, boolean drawEdges) {
   noFill();
   ArrayList<Blob> blobs = new ArrayList<Blob>();
-  for (int n = 0; n < BlobDetection.getBlobNb(); n++){
+  for (int n = 0; n < BlobDetection.getBlobNb(); n++) {
     blobs.add(BlobDetection.getBlob(n));
   }
 
@@ -141,23 +145,21 @@ void drawBlobsAndEdges(boolean drawBlobs, boolean drawEdges) {
       stroke(255, 0, 0);
       rect(biggestBlob.xMin*widthOfWindow, biggestBlob.yMin*heightOfWindow, biggestBlob.w*widthOfWindow, biggestBlob.h*heightOfWindow);
       soundOnCondition(biggestBlob.w*widthOfWindow, biggestBlob.h*heightOfWindow);
-    }
-    
-    // Edges
-    if (drawEdges) {
-      EdgeVertex A, B;
-      strokeWeight(2);
-      stroke(0, 255, 0);
-      for (int i = 0; i < biggestBlob.getEdgeNb(); i++){
-        A = biggestBlob.getEdgeVertexA(i);
-        B = biggestBlob.getEdgeVertexB(i);
-        if (A !=null && B !=null)
-          line(A.x*widthOfWindow, A.y*heightOfWindow, B.x*widthOfWindow, B.y*heightOfWindow);
+
+      // Edges
+      if (drawEdges) {
+        EdgeVertex A, B;
+        strokeWeight(2);
+        stroke(255, 255, 255);
+        for (int i = 0; i < biggestBlob.getEdgeNb(); i++) {
+          A = biggestBlob.getEdgeVertexA(i);
+          B = biggestBlob.getEdgeVertexB(i);
+          if (A !=null && B !=null) {
+            line(A.x*widthOfWindow, A.y*heightOfWindow, B.x*widthOfWindow, B.y*heightOfWindow);
+          }
+        }
       }
     }
-    
-    
-    
   }
 }
 
