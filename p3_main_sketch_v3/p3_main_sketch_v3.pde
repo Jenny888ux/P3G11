@@ -20,7 +20,7 @@ float distanceThreshold, colorThreshold;
 PImage display, depthImage;
 int depth[];
 int widthOfWindow, heightOfWindow;
-ArrayList<PVector> points;
+
 void setup() {
   size(512, 424);
   widthOfWindow = 512;
@@ -41,7 +41,7 @@ void setup() {
   //sound
   file = new SoundFile(this, "sound1.wav");
   file.loop();
-  points = new ArrayList<PVector>();
+  
 }
 
 void draw() {
@@ -71,7 +71,6 @@ void draw() {
   //image(display, 0, 0, widthOfWindow, heightOfWindow);
   drawBlobsAndEdges(true, true);
   
-  println(points.size());
   popMatrix();
 }
 
@@ -148,16 +147,36 @@ void drawBlobsAndEdges(boolean drawBlobs, boolean drawEdges) {
 
       // Edges
       if (drawEdges) {
-        EdgeVertex A, B;
-        strokeWeight(2);
-        stroke(255, 255, 255);
-        for (int i = 0; i < biggestBlob.getEdgeNb(); i++) {
-          A = biggestBlob.getEdgeVertexA(i);
-          B = biggestBlob.getEdgeVertexB(i);
-          if (A !=null && B !=null) {
-            line(A.x*widthOfWindow, A.y*heightOfWindow, B.x*widthOfWindow, B.y*heightOfWindow);
+        ArrayList<PVector> edges;
+        edges = findEdgesOfBiggestBlobAndDrawThem(biggestBlob);
+        float sumX = 0;
+        float sumY = 0;
+        float minX = 0;
+        float minY = 0;
+        for (PVector point : edges) {
+          if (minX < point.x || minY < point.y){
+            minX = point.x;
+            minY = point.y;
           }
+          sumX += point.x;
+          sumY += point.y;
+          
         }
+        
+        float centerX = 0;
+        float centerY = 0;
+        for (PVector point : edges) {
+          
+          float comY = (point.y) /sumY;
+          float comX = (point.x) /sumX;
+          centerX += comX;
+          centerY += comY;
+        }
+        println(centerX);
+        translate(sumX, sumY);
+        ellipse(centerX, centerY, 20,20);
+          
+        
       }
     }
   }
@@ -202,4 +221,28 @@ void soundOnCondition(float widthOfBlob, float heightOfBlob) {
 
   file.amp(amp);
   file.rate(rate);
+}
+
+ArrayList<PVector> findEdgesOfBiggestBlobAndDrawThem(Blob biggestBlob) {
+  Blob blob;
+  EdgeVertex A, B;
+  blob = biggestBlob;
+  ArrayList<PVector> edges = new ArrayList<PVector>();
+  strokeWeight(2);
+  stroke(255, 255, 255);
+  float x1,x2,y1,y2;
+  for (int i = 0; i < blob.getEdgeNb(); i++) {
+    A = blob.getEdgeVertexA(i);
+    B = blob.getEdgeVertexB(i);
+    if (A !=null && B !=null) {
+      x1 = A.x*widthOfWindow;
+      x2 = B.x*widthOfWindow;
+      y1 = A.y*heightOfWindow;
+      y2 = B.y*heightOfWindow;
+      line(A.x*widthOfWindow, A.y*heightOfWindow, B.x*widthOfWindow, B.y*heightOfWindow);
+      edges.add(new PVector(x1, y1));
+      edges.add(new PVector(x2, y2));
+      }
+  }
+  return edges;
 }
