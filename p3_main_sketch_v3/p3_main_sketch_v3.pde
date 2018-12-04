@@ -1,3 +1,10 @@
+import ddf.minim.*;
+import ddf.minim.analysis.*;
+import ddf.minim.effects.*;
+import ddf.minim.signals.*;
+import ddf.minim.spi.*;
+import ddf.minim.ugens.*;
+
 import blobDetection.*;
 import KinectPV2.*;
 import processing.sound.*;
@@ -21,8 +28,14 @@ PImage display, depthImage;
 int depth[];
 int widthOfWindow, heightOfWindow;
 
-void setup() {
+Minim minim;
+AudioPlayer soundFile;
+ 
+void settings(){
   size(512, 424);
+}
+
+void setup() {
   widthOfWindow = 512;
   heightOfWindow = 424;
   //oscP5 = new OscP5(this,12000);
@@ -37,13 +50,17 @@ void setup() {
   BlobDetection = new BlobDetection(512, 424);
   BlobDetection.setPosDiscrimination(false);
   BlobDetection.setThreshold(1f);
-
+ 
   //sound
-  file = new SoundFile(this, "sound1.wav");
-  file.loop();
-  
+  minim = new Minim(this);
+  soundFile = minim.loadFile("sound1.wav",1024);
+  println("nej");
+  soundFile.loop();
+  FFTSketch FFTWin = new FFTSketch(soundFile);
 }
 
+  
+  
 void draw() {
   background(0);
   depth = kinect.getRawDepthData();
@@ -70,7 +87,7 @@ void draw() {
 
   //image(display, 0, 0, widthOfWindow, heightOfWindow);
   drawBlobsAndEdges(true, true);
-  
+
   popMatrix();
 }
 
@@ -154,23 +171,24 @@ void drawBlobsAndEdges(boolean drawBlobs, boolean drawEdges) {
         float minX = 0;
         float minY = 0;
         for (PVector point : edges) {
-          if (minX < point.x || minY < point.y){
+          if (minX < point.x || minY < point.y) {
             minX = point.x;
             minY = point.y;
           }
           sumX += point.x;
           sumY += point.y;
-          
         }
-          
-        float comY = sumY/edges.size();
-        float comX = sumX/edges.size();
         
+        int edgeNumber = edges.size();
+
+        float comY = sumY/edgeNumber;
+        float comX = sumX/edgeNumber;
         
-        fill(255,0,0);
-        ellipse(comX, comY, 50,50);
-          
-        
+
+        fill(255, 0, 0);
+        ellipse(comX, comY, 4, 4);
+        PVector COM = new PVector(comX,comY);
+        distance(COM, edgeNumber, edges);
       }
     }
   }
@@ -224,7 +242,7 @@ ArrayList<PVector> findEdgesOfBiggestBlobAndDrawThem(Blob biggestBlob) {
   ArrayList<PVector> edges = new ArrayList<PVector>();
   strokeWeight(2);
   stroke(255, 255, 255);
-  float x1,x2,y1,y2;
+  float x1, x2, y1, y2;
   for (int i = 0; i < blob.getEdgeNb(); i++) {
     A = blob.getEdgeVertexA(i);
     B = blob.getEdgeVertexB(i);
@@ -236,7 +254,18 @@ ArrayList<PVector> findEdgesOfBiggestBlobAndDrawThem(Blob biggestBlob) {
       line(A.x*widthOfWindow, A.y*heightOfWindow, B.x*widthOfWindow, B.y*heightOfWindow);
       edges.add(new PVector(x1, y1));
       edges.add(new PVector(x2, y2));
-      }
+    }
   }
   return edges;
+}
+
+void distance(PVector COM, int egdeNumber, ArrayList<PVector> egdes) {
+  
+  int[] edgeDistance = new int[egdeNumber];
+  for (int i = 0; i<egdeNumber; i++) {
+    edgeDistance[i] = int(sqrt((pow(COM.x,2) - pow(egdes.get(i).x,2) + pow(COM.y,2) - pow(egdes.get(i).y, 2))));
+    
+  }
+  println(edgeDistance);
+  
 }
