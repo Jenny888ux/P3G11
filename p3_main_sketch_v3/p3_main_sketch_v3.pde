@@ -162,19 +162,13 @@ void drawBlobsAndEdges(boolean drawBlobs, boolean drawEdges) {
           sumY += point.y;
           
         }
-        
-        float centerX = 0;
-        float centerY = 0;
-        for (PVector point : edges) {
           
-          float comY = (point.y) /sumY;
-          float comX = (point.x) /sumX;
-          centerX += comX;
-          centerY += comY;
-        }
-        println(centerX);
-        translate(sumX, sumY);
-        ellipse(centerX, centerY, 20,20);
+        float comY = sumY/edges.size();
+        float comX = sumX/edges.size();
+        
+        
+        fill(255,0,0);
+        ellipse(comX, comY, 50,50);
           
         
       }
