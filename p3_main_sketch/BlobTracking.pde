@@ -46,7 +46,7 @@ class BlobTracking {
       if (b.sizeOfBlob() > 750) {
         b.display();
         b.calcFeatures();
-        b.sendPureData();
+        //b.sendPureData();
       }
     }
   }// end bracket method

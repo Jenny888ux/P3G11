@@ -1,21 +1,14 @@
 import ddf.minim.*;
 import ddf.minim.analysis.*;
-import ddf.minim.effects.*;
-import ddf.minim.signals.*;
-import ddf.minim.spi.*;
-import ddf.minim.ugens.*;
+
 
 import blobDetection.*;
 import KinectPV2.*;
-import processing.sound.*;
 
 //import oscP5.*;
 
 
-SoundFile file;
-float amp;
-float rate;
-
+ArrayList<Integer> distanceArray;
 
 KinectPV2 kinect;
 BlobDetection BlobDetection;
@@ -30,9 +23,12 @@ int widthOfWindow, heightOfWindow;
 
 Minim minim;
 AudioPlayer soundFile;
- 
-void settings(){
+FFTSketch FFTWin;
+
+void settings() {
   size(512, 424);
+  minim = new Minim(this);
+  soundFile = minim.loadFile("sound.wav", 1024);
 }
 
 void setup() {
@@ -50,17 +46,14 @@ void setup() {
   BlobDetection = new BlobDetection(512, 424);
   BlobDetection.setPosDiscrimination(false);
   BlobDetection.setThreshold(1f);
- 
+
   //sound
-  minim = new Minim(this);
-  soundFile = minim.loadFile("sound1.wav",1024);
-  println("nej");
-  soundFile.loop();
-  FFTSketch FFTWin = new FFTSketch(soundFile);
+
+  FFTSketch FFTWin = new FFTSketch();
+  distanceArray  = new ArrayList();
 }
 
-  
-  
+
 void draw() {
   background(0);
   depth = kinect.getRawDepthData();
@@ -73,7 +66,7 @@ void draw() {
     return;
   }
   // threshold min max  kinect width kinect height
-  Threshold(1500, 3000, 512, 424);
+  Threshold(2000, 2500, 512, 424);
 
   //image(display, 0, 0, 1024, 848);
 
@@ -89,6 +82,8 @@ void draw() {
   drawBlobsAndEdges(true, true);
 
   popMatrix();
+
+  //graph.drawTheGraph();
 }
 
 void mouseClicked() {
@@ -160,7 +155,7 @@ void drawBlobsAndEdges(boolean drawBlobs, boolean drawEdges) {
       strokeWeight(4);
       stroke(255, 0, 0);
       rect(biggestBlob.xMin*widthOfWindow, biggestBlob.yMin*heightOfWindow, biggestBlob.w*widthOfWindow, biggestBlob.h*heightOfWindow);
-      soundOnCondition(biggestBlob.w*widthOfWindow, biggestBlob.h*heightOfWindow);
+      //soundOnCondition(biggestBlob.w*widthOfWindow, biggestBlob.h*heightOfWindow);
 
       // Edges
       if (drawEdges) {
@@ -178,16 +173,16 @@ void drawBlobsAndEdges(boolean drawBlobs, boolean drawEdges) {
           sumX += point.x;
           sumY += point.y;
         }
-        
+
         int edgeNumber = edges.size();
 
         float comY = sumY/edgeNumber;
         float comX = sumX/edgeNumber;
-        
+
 
         fill(255, 0, 0);
-        ellipse(comX, comY, 4, 4);
-        PVector COM = new PVector(comX,comY);
+        ellipse(comX, comY, 8,8);
+        PVector COM = new PVector(comX, comY);
         distance(COM, edgeNumber, edges);
       }
     }
@@ -221,19 +216,19 @@ Blob biggestblob(Blob b) {
   return null;
 }
 
-void soundOnCondition(float widthOfBlob, float heightOfBlob) {
-  //float widthofk = map(widthOfBlob, 0,1024,0,512);
-  //float heightofk = map(heightOfBlob,0,848,0,424);
-
-  float m1 = map(heightOfBlob, 150, 450, 0, 1);
-  amp = m1;
-  float m2 = map(widthOfBlob, 0, 424, 0.1f, 3.5f);
-  rate = m2;
-
-
-  file.amp(amp);
-  file.rate(rate);
-}
+/*void soundOnCondition(float widthOfBlob, float heightOfBlob) {
+ //float widthofk = map(widthOfBlob, 0,1024,0,512);
+ //float heightofk = map(heightOfBlob,0,848,0,424);
+ 
+ float m1 = map(heightOfBlob, 150, 450, 0, 1);
+ amp = m1;
+ float m2 = map(widthOfBlob, 0, 424, 0.1f, 3.5f);
+ rate = m2;
+ 
+ 
+ file.amp(amp);
+ file.rate(rate);
+ }*/
 
 ArrayList<PVector> findEdgesOfBiggestBlobAndDrawThem(Blob biggestBlob) {
   Blob blob;
@@ -259,13 +254,23 @@ ArrayList<PVector> findEdgesOfBiggestBlobAndDrawThem(Blob biggestBlob) {
   return edges;
 }
 
-void distance(PVector COM, int egdeNumber, ArrayList<PVector> egdes) {
-  
-  int[] edgeDistance = new int[egdeNumber];
-  for (int i = 0; i<egdeNumber; i++) {
-    edgeDistance[i] = int(sqrt((pow(COM.x,2) - pow(egdes.get(i).x,2) + pow(COM.y,2) - pow(egdes.get(i).y, 2))));
-    
+void distance(PVector COM, int edgeNumber, ArrayList<PVector> edges) {
+  for (int i = 0; i < edgeNumber; i++) {
+    float x2 = edges.get(i).x;
+    float y2 = edges.get(i).y;
+    float x1 = COM.x;
+    float y1 = COM.y;
+    float a = pow((x2 - x1), 2);
+    float b = pow((y2 - y1), 2);
+    float d = sqrt(a + b);
+    int distance = int(d);
+    if (i > edgeNumber) {
+      distanceArray.remove(i);
+      i--;
+    } else if (distanceArray.size()-1 > i) {
+      distanceArray.set(i, distance);
+    } else {
+      distanceArray.add(distance);
+    }
   }
-  println(edgeDistance);
-  
 }

@@ -7,58 +7,50 @@ import ddf.minim.ugens.*;
 import ddf.minim.analysis.FFT;
 
 public class FFTSketch extends PApplet {
-  Minim minim;
-  AudioPlayer soundFile;
-  FFT fft;
   float prevY;
-  
-  public FFTSketch(AudioPlayer soundFile) {
-    super();
-    this.soundFile = soundFile;
+
+  public FFTSketch() {
     PApplet.runSketch(new String[]{this.getClass().getSimpleName()}, this);
   }
 
   public void settings() {
-    size(512, 425);
+    size(600, 400);
   }
-
-  public void setup() {
-    fft = new FFT( soundFile.bufferSize(), soundFile.sampleRate() );
-  }
-
 
   public void draw() {
     background(0);
     stroke(255);
-    float size = fft.specSize();
-    fft.forward( soundFile.mix );
 
+    if (distanceArray != null) {
 
-    for (int i = 0; i < size; i++)
-    {
-      float scale = 500;
-      float plotVar = height - fft.getBand(i)* scale;
-      stroke(255, 0, 0);
-      line( i, height, i, plotVar );
+      int size = distanceArray.size();
+      for (int i = 1; i < distanceArray.size(); i+=100) {
+        
+        int temp = distanceArray.get(i);
+        
+        int m = int(map(temp, 0, 670, 0, height));
+        int plotVar = height-m;
+        stroke(255, 0, 0);
+        int x = int(map(i, 1, size, 0, width));
+        line(x, height, x, plotVar);
+        
+      }
+      drawGraph(size);
+          
     }
-    drawGraph(size);
+     
   }
-
   void drawGraph(float size) {
 
     for (int i = 0; i <= size; i += 50) {
 
       fill(255, 255, 255);
-      textSize(15);
-      text(i/2, i-10, height-10);
       stroke(255);
       line(i, height, i, 0);
     }
     for (int j = 0; j < height; j += 33) {
 
       fill(255, 255, 255);
-      textSize(15);
-      text(12-j/(height/12), 0, j);
 
       stroke(255);
       line(0, j, size, j);
