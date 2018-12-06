@@ -9,7 +9,7 @@ import KinectPV2.*;
 
 
 ArrayList<Integer> distanceArray;
-float comX,comY;
+float comX, comY;
 
 KinectPV2 kinect;
 BlobDetection BlobDetection;
@@ -30,6 +30,7 @@ void settings() {
   size(512, 424);
   minim = new Minim(this);
   soundFile = minim.loadFile("sound.wav", 1024);
+  //soundFile.loop();
 }
 
 void setup() {
@@ -172,23 +173,20 @@ void drawBlobsAndEdges(boolean drawBlobs, boolean drawEdges) {
           sumX += point.x;
           sumY += point.y;
         }
-        
+
         int edgeNumber = edges.size();
-        if(frameCount % 20 == 0){
+        if (frameCount % 20 == 0) {
           distanceArray.clear();
           comY = sumY/edgeNumber;
           comX = sumX/edgeNumber;
           PVector COM = new PVector(comX, comY);
           distance(COM, edgeNumber, edges);
-        
         }
-        if (comX!=0 && comY !=0){
-          
+        if (comX!=0 && comY !=0) {
+
           fill(255, 0, 0);
           ellipse(comX, comY, 8, 8);
-        
         }
-        
       }
     }
   }
