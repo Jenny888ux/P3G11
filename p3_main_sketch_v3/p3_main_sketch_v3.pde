@@ -9,6 +9,7 @@ import KinectPV2.*;
 
 
 ArrayList<Integer> distanceArray;
+float comX,comY;
 
 KinectPV2 kinect;
 BlobDetection BlobDetection;
@@ -171,17 +172,23 @@ void drawBlobsAndEdges(boolean drawBlobs, boolean drawEdges) {
           sumX += point.x;
           sumY += point.y;
         }
-
+        
         int edgeNumber = edges.size();
-
-        float comY = sumY/edgeNumber;
-        float comX = sumX/edgeNumber;
-
-
-        fill(255, 0, 0);
-        ellipse(comX, comY, 8, 8);
-        PVector COM = new PVector(comX, comY);
-        distance(COM, edgeNumber, edges);
+        if(frameCount % 20 == 0){
+          distanceArray.clear();
+          comY = sumY/edgeNumber;
+          comX = sumX/edgeNumber;
+          PVector COM = new PVector(comX, comY);
+          distance(COM, edgeNumber, edges);
+        
+        }
+        if (comX!=0 && comY !=0){
+          
+          fill(255, 0, 0);
+          ellipse(comX, comY, 8, 8);
+        
+        }
+        
       }
     }
   }
@@ -252,7 +259,7 @@ ArrayList<PVector> findEdgesOfBiggestBlobAndDrawThem(Blob biggestBlob) {
 }
 
 void distance(PVector COM, int edgeNumber, ArrayList<PVector> edges) {
-  for (int i = 0; i < distanceArray.size(); i++) {
+  for (int i = 0; i < edgeNumber; i++) {
     float x2 = edges.get(i).x;
     float y2 = edges.get(i).y;
     float x1 = COM.x;

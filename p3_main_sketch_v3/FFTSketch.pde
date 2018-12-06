@@ -28,7 +28,7 @@ public class FFTSketch extends PApplet {
         
         int temp = distanceArray.get(i);
         
-        int m = int(map(temp, 0, 670, 0, height));
+        int m = int(map(temp, 0, 400, 0, height));
         int plotVar = height-m;
         stroke(255, 0, 0);
         int x = int(map(i, 1, size, 0, width));
