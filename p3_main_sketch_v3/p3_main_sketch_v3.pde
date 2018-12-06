@@ -53,19 +53,16 @@ void setup() {
   distanceArray  = new ArrayList();
 }
 
-
 void draw() {
   background(0);
   depth = kinect.getRawDepthData();
   depthImage = kinect.getDepthImage();
 
-
-
   // Being overly cautious here
   if (depth == null && depthImage == null) {
     return;
   }
-  // threshold min max  kinect width kinect height
+  // threshold min max kinect width kinect height 
   Threshold(2000, 2500, 512, 424);
 
   //image(display, 0, 0, 1024, 848);
@@ -86,6 +83,7 @@ void draw() {
   //graph.drawTheGraph();
 }
 
+//Click on window to see how far away each pixel is from kinect
 void mouseClicked() {
   float i = mouseX + mouseY*widthOfWindow;
   float i2 = map(i, 0, 868, 0, 217);
@@ -96,7 +94,7 @@ void mouseClicked() {
 }
 
 
-
+//Threshold algorithm
 public void Threshold(int threshold_min, int threshold_max, int kw, int kh) {
   display = createImage(kw, kh, RGB);
   //display.loadPixels();
@@ -107,7 +105,7 @@ public void Threshold(int threshold_min, int threshold_max, int kw, int kh) {
 
       int index = x + y * kw;
       if (depth[index] > threshold_min && depth[index] < threshold_max) {
-        // A red color instead
+        //paints the things in the threshold white
         display.pixels[index] = color(255, 255, 255);
       } else {
         display.pixels[index] = color(0, 0, 0);
@@ -181,7 +179,7 @@ void drawBlobsAndEdges(boolean drawBlobs, boolean drawEdges) {
 
 
         fill(255, 0, 0);
-        ellipse(comX, comY, 8,8);
+        ellipse(comX, comY, 8, 8);
         PVector COM = new PVector(comX, comY);
         distance(COM, edgeNumber, edges);
       }
@@ -225,7 +223,6 @@ Blob biggestblob(Blob b) {
  float m2 = map(widthOfBlob, 0, 424, 0.1f, 3.5f);
  rate = m2;
  
- 
  file.amp(amp);
  file.rate(rate);
  }*/
@@ -255,7 +252,7 @@ ArrayList<PVector> findEdgesOfBiggestBlobAndDrawThem(Blob biggestBlob) {
 }
 
 void distance(PVector COM, int edgeNumber, ArrayList<PVector> edges) {
-  for (int i = 0; i < edgeNumber; i++) {
+  for (int i = 0; i < distanceArray.size(); i++) {
     float x2 = edges.get(i).x;
     float y2 = edges.get(i).y;
     float x1 = COM.x;
