@@ -44,12 +44,12 @@ void setup() {
   points = new ArrayList();
 
   //sound
-  file = new SoundFile(this, "sound1.wav");
+  file = new SoundFile(this, "song.mp3");
   file.loop();
   reverb = new Reverb(this);
   reverb.process(file);
   delay = new Delay(this);
-  delay.process(file,1);
+  
 }
 
 void draw() {
@@ -249,6 +249,7 @@ void delay(float widthOfBlob, float heightOfBlob) {
 
   if (points.get(0).compareXY(points.get(points.size()-1)) > 135) {
     delayAmount = map(points.get(0).compareXY(points.get(points.size()-1)), 120, 200, 0,1);
+    delay.process(file,1);
     delay.feedback(delayAmount);
     timer = 0;
   }
