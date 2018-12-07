@@ -15,6 +15,7 @@ public class FFTSketch extends PApplet {
 
   void setup() {
     distanceArrayShort = new ArrayList();
+    topPoints = new int[100];
   }
 
   public void draw() {
@@ -37,6 +38,7 @@ public class FFTSketch extends PApplet {
       }
       drawGraph(size);
       findTopPoints(distanceArrayShort);
+      changeSound();
     }
   }
   void drawGraph(float size) {
@@ -77,8 +79,22 @@ public class FFTSketch extends PApplet {
     for (int i = 0; i < topPoints.length-1; i++) {
       //println(topPoints[0]);
     }
+    
   }
   //minim.
   //soundFile.loop();
-  
+  void changeSound() {
+    float arm1 = map(topPoints[0], 0, 300, -80, 10);
+    float head = map(topPoints[1], 0, 300, -1, 1);
+    float arm2 = map(topPoints[2], 0, 300, -1, 1);
+    float leg1 = map(topPoints[3], 0, 300, -80, 10);
+    float leg2 = map(topPoints[4], 0, 300, -80, 10);
+    
+    println(topPoints[0]);
+    println(topPoints[2]);
+    
+    soundFile.setGain(arm1);
+    soundFile.setPan(arm2);
+        
+  }
 }

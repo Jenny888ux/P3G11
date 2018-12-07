@@ -53,6 +53,7 @@ void setup() {
 
   FFTSketch FFTWin = new FFTSketch();
   distanceArray  = new ArrayList();
+  soundFile.loop();
 }
 
 void draw() {
