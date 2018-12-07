@@ -3,7 +3,11 @@ import blobDetection.*;
 import KinectPV2.*;
 
 SoundFile file;
+
 Reverb reverb;
+float room, damp, wet;
+
+ArrayList<Point> points;
 
 float comX, comY;
 
@@ -33,11 +37,14 @@ void setup() {
   BlobDetection = new BlobDetection(512, 424);
   BlobDetection.setPosDiscrimination(false);
   BlobDetection.setThreshold(1f);
+  
+  points = new ArrayList();
 
   //sound
   file = new SoundFile(this, "sound1.wav");
   file.loop();
-  
+  reverb = new Reverb(this);
+  reverb.process(file);
 }
 
 void draw() {
@@ -66,7 +73,6 @@ void draw() {
   drawBlobsAndEdges(true, true);
 
   popMatrix();
-
 }
 
 //Click on window to see how far away each pixel is from kinect
@@ -160,7 +166,7 @@ void drawBlobsAndEdges(boolean drawBlobs, boolean drawEdges) {
 
         int edgeNumber = edges.size();
         if (frameCount % 20 == 0) {
-         
+
           comY = sumY/edgeNumber;
           comX = sumX/edgeNumber;
           PVector COM = new PVector(comX, comY);
@@ -203,22 +209,43 @@ Blob biggestblob(Blob b) {
 }
 
 void soundOnCondition(float widthOfBlob, float heightOfBlob) {
- //float widthofk = map(widthOfBlob, 0,1024,0,512);
- //float heightofk = map(heightOfBlob,0,848,0,424);
- 
- float area = widthOfBlob*heightOfBlob;
- println(area);
- 
- reverb = new Reverb(this);
- 
- /*float m1 = map(heightOfBlob, 150, 450, 0, 1);
- amp = m1;
- float m2 = map(widthOfBlob, 0, 424, 0.1f, 3.5f);
- rate = m2;
- 
- file.amp(amp);
- file.rate(rate);*/
- }
+  //float widthofk = map(widthOfBlob, 0,1024,0,512);
+  //float heightofk = map(heightOfBlob,0,848,0,424);
+
+  float area = widthOfBlob*heightOfBlob;
+  float areaMap = map(area, 19000, 100000, 0, 1);
+  //println(area);
+  //println(areaMap);
+  room = areaMap;
+  damp = areaMap;
+  wet = areaMap;
+  reverb.set(room, damp, wet);
+
+  delay(widthOfBlob, heightOfBlob);
+
+  /*float m1 = map(heightOfBlob, 150, 450, 0, 1);
+   amp = m1;
+   float m2 = map(widthOfBlob, 0, 424, 0.1f, 3.5f);
+   rate = m2;
+   
+   file.amp(amp);
+   file.rate(rate);*/
+}
+
+void delay(float widthOfBlob, float heightOfBlob) {
+  if (points == null)
+    points.add(new Point(widthOfBlob, heightOfBlob));
+  if (points.size() < 1000) {
+    points.add(new Point(widthOfBlob, heightOfBlob));
+  } else {
+    points.add(0, new Point(widthOfBlob, heightOfBlob));
+  }
+  println(points.get(0).compareXY(points.get(points.size()-1)));
+
+  if (points.get(0).compareXY(points.get(points.size()-1)) > 135) {
+    
+  }
+}
 
 ArrayList<PVector> findEdgesOfBiggestBlobAndDrawThem(Blob biggestBlob) {
   Blob blob;
