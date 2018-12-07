@@ -66,7 +66,7 @@ void draw() {
     return;
   }
   // threshold min max kinect width kinect height 
-  Threshold(2000, 2500, 512, 424);
+  Threshold(1500, 2500, 512, 424);
 
   //image(display, 0, 0, 1024, 848);
 
