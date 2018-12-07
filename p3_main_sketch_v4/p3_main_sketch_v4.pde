@@ -6,6 +6,9 @@ SoundFile file;
 
 Reverb reverb;
 float room, damp, wet;
+Delay delay;
+float delayAmount;
+int timer;
 
 ArrayList<Point> points;
 
@@ -45,6 +48,8 @@ void setup() {
   file.loop();
   reverb = new Reverb(this);
   reverb.process(file);
+  delay = new Delay(this);
+  delay.process(file,1);
 }
 
 void draw() {
@@ -213,7 +218,7 @@ void soundOnCondition(float widthOfBlob, float heightOfBlob) {
   //float heightofk = map(heightOfBlob,0,848,0,424);
 
   float area = widthOfBlob*heightOfBlob;
-  float areaMap = map(area, 19000, 100000, 0, 1);
+  float areaMap = map(area, 19000, 150000, 0, 1);
   //println(area);
   //println(areaMap);
   room = areaMap;
@@ -221,7 +226,7 @@ void soundOnCondition(float widthOfBlob, float heightOfBlob) {
   wet = areaMap;
   reverb.set(room, damp, wet);
 
-  delay(widthOfBlob, heightOfBlob);
+  //delay(widthOfBlob, heightOfBlob);
 
   /*float m1 = map(heightOfBlob, 150, 450, 0, 1);
    amp = m1;
@@ -235,7 +240,7 @@ void soundOnCondition(float widthOfBlob, float heightOfBlob) {
 void delay(float widthOfBlob, float heightOfBlob) {
   if (points == null)
     points.add(new Point(widthOfBlob, heightOfBlob));
-  if (points.size() < 1000) {
+  if (points.size() < 5) {
     points.add(new Point(widthOfBlob, heightOfBlob));
   } else {
     points.add(0, new Point(widthOfBlob, heightOfBlob));
@@ -243,8 +248,14 @@ void delay(float widthOfBlob, float heightOfBlob) {
   println(points.get(0).compareXY(points.get(points.size()-1)));
 
   if (points.get(0).compareXY(points.get(points.size()-1)) > 135) {
-    
+    delayAmount = map(points.get(0).compareXY(points.get(points.size()-1)), 120, 200, 0,1);
+    delay.feedback(delayAmount);
+    timer = 0;
   }
+  
+  if (timer > 200)
+    delay.feedback(0);
+  timer++;
 }
 
 ArrayList<PVector> findEdgesOfBiggestBlobAndDrawThem(Blob biggestBlob) {
