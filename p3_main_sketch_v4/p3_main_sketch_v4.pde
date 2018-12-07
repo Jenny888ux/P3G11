@@ -1,20 +1,15 @@
-import ddf.minim.*;
-import ddf.minim.analysis.*;
-
-
+import processing.sound.*;
 import blobDetection.*;
 import KinectPV2.*;
 
-//import oscP5.*;
+SoundFile file;
+Reverb reverb;
 
-
-ArrayList<Integer> distanceArray;
 float comX, comY;
 
 KinectPV2 kinect;
 BlobDetection BlobDetection;
 
-//OscP5 oscP5;
 
 float distanceThreshold, colorThreshold;
 
@@ -22,18 +17,8 @@ PImage display, depthImage;
 int depth[];
 int widthOfWindow, heightOfWindow;
 
-Minim minim;
-AudioPlayer soundFile;
-FFTSketch FFTWin;
-
-void settings() {
-  size(512, 424);
-  minim = new Minim(this);
-  soundFile = minim.loadFile("sound.wav", 1024);
-  //soundFile.loop();
-}
-
 void setup() {
+  size(512, 424);
   widthOfWindow = 512;
   heightOfWindow = 424;
   //oscP5 = new OscP5(this,12000);
@@ -50,10 +35,9 @@ void setup() {
   BlobDetection.setThreshold(1f);
 
   //sound
-
-  FFTSketch FFTWin = new FFTSketch();
-  distanceArray  = new ArrayList();
-  soundFile.loop();
+  file = new SoundFile(this, "sound1.wav");
+  file.loop();
+  
 }
 
 void draw() {
@@ -83,7 +67,6 @@ void draw() {
 
   popMatrix();
 
-  //graph.drawTheGraph();
 }
 
 //Click on window to see how far away each pixel is from kinect
@@ -156,7 +139,7 @@ void drawBlobsAndEdges(boolean drawBlobs, boolean drawEdges) {
       strokeWeight(4);
       stroke(255, 0, 0);
       rect(biggestBlob.xMin*widthOfWindow, biggestBlob.yMin*heightOfWindow, biggestBlob.w*widthOfWindow, biggestBlob.h*heightOfWindow);
-      //soundOnCondition(biggestBlob.w*widthOfWindow, biggestBlob.h*heightOfWindow);
+      soundOnCondition(biggestBlob.w*widthOfWindow, biggestBlob.h*heightOfWindow);
 
       // Edges
       if (drawEdges) {
@@ -177,11 +160,10 @@ void drawBlobsAndEdges(boolean drawBlobs, boolean drawEdges) {
 
         int edgeNumber = edges.size();
         if (frameCount % 20 == 0) {
-          distanceArray.clear();
+         
           comY = sumY/edgeNumber;
           comX = sumX/edgeNumber;
           PVector COM = new PVector(comX, comY);
-          distance(COM, edgeNumber, edges);
         }
         if (comX!=0 && comY !=0) {
 
@@ -220,18 +202,23 @@ Blob biggestblob(Blob b) {
   return null;
 }
 
-/*void soundOnCondition(float widthOfBlob, float heightOfBlob) {
+void soundOnCondition(float widthOfBlob, float heightOfBlob) {
  //float widthofk = map(widthOfBlob, 0,1024,0,512);
  //float heightofk = map(heightOfBlob,0,848,0,424);
  
- float m1 = map(heightOfBlob, 150, 450, 0, 1);
+ float area = widthOfBlob*heightOfBlob;
+ println(area);
+ 
+ reverb = new Reverb(this);
+ 
+ /*float m1 = map(heightOfBlob, 150, 450, 0, 1);
  amp = m1;
  float m2 = map(widthOfBlob, 0, 424, 0.1f, 3.5f);
  rate = m2;
  
  file.amp(amp);
- file.rate(rate);
- }*/
+ file.rate(rate);*/
+ }
 
 ArrayList<PVector> findEdgesOfBiggestBlobAndDrawThem(Blob biggestBlob) {
   Blob blob;
@@ -255,25 +242,4 @@ ArrayList<PVector> findEdgesOfBiggestBlobAndDrawThem(Blob biggestBlob) {
     }
   }
   return edges;
-}
-
-void distance(PVector COM, int edgeNumber, ArrayList<PVector> edges) {
-  for (int i = 0; i < edgeNumber; i++) {
-    float x2 = edges.get(i).x;
-    float y2 = edges.get(i).y;
-    float x1 = COM.x;
-    float y1 = COM.y;
-    float a = pow((x2 - x1), 2);
-    float b = pow((y2 - y1), 2);
-    float d = sqrt(a + b);
-    int distance = int(d);
-    if (i > edgeNumber) {
-      distanceArray.remove(i);
-      i--;
-    } else if (distanceArray.size()-1 > i) {
-      distanceArray.set(i, distance);
-    } else {
-      distanceArray.add(distance);
-    }
-  }
 }
