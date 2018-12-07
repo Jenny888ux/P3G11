@@ -11,7 +11,8 @@ sound = new SoundFile(this, "sound.wav");
 reverb = new Reverb(this);
 reverb.process(sound);
 delay = new Delay(this);
-delay.process(sound);
+delay.process(sound,1);
+
 
 sound.loop();
 }
@@ -24,4 +25,10 @@ void draw() {
   float wet=mX; //Primær ændring
   
   reverb.set(room, damp, wet);
+  //float time=mX;
+  //float feedback=0.5;
+  
+  //delay.set(time, feedback);
+  //delay.time(mX); //Pause tror jeg, skaber skretten.
+  delay.feedback(mX);
 }
