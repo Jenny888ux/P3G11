@@ -43,10 +43,10 @@ void playSound() {
   if (soundNB == 0)
     file.loop();
   else if (soundNB == 1) {
-    file.stop();
+    //file.stop();
     file2.loop();
   } else if (soundNB == 2){
-    file.loop();
+    //file.loop();
   }
 }
 
