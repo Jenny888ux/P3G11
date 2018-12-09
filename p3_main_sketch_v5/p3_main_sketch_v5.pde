@@ -48,8 +48,10 @@ void setup() {
   BlobDetection.setThreshold(1f);
 
   //sound
-  file = new SoundFile(this, "sound1.wav");
-  file2 = new SoundFile(this, "song.mp3");
+  file = new SoundFile(this, "085_drums.aif");
+  file2 = new SoundFile(this, "100_bass.wav");
+  file3 = new SoundFile(this, "090_guitar.aif");
+  file4 = new SoundFile(this, "100_voice.aif");
   playSoundN();
 }
 
@@ -94,13 +96,11 @@ void mouseClicked() {
 void mousePressed() {
   if (mouseButton == LEFT) {
     soundNB++;
-     playSoundN();
-  } else if (mouseButton == RIGHT) {
+    playSoundN();
+  } else if (mouseButton == RIGHT && soundNB > 0) {
     soundNB--;
-     playSoundP();
+    playSoundP();
   }
-
- 
 }
 
 //Threshold algorithm
@@ -229,20 +229,27 @@ void soundOnCondition(float widthOfBlob, float heightOfBlob) {
   //float widthofk = map(widthOfBlob, 0,1024,0,512);
   //float heightofk = map(heightOfBlob,0,848,0,424);
   if (soundNB == 0) {
-    rate1 = map(widthOfBlob, 0, 424, 0, 5);
+    rate1 = map(widthOfBlob, 424, 0, 0, 5);
     amp1 = map(heightOfBlob, 250, 450, 0, 1);
     file.amp(amp1);
     file.rate(rate1);
   } else if (soundNB == 1) {
-    rate2 = map(widthOfBlob, 0, 424, 0, 5);
+    rate2 = map(widthOfBlob, 424, 0, 0, 5);
     amp2 = map(heightOfBlob, 250, 450, 0, 1);
     file2.amp(amp2);
     file2.rate(rate2);
   } else if (soundNB == 2) {
-    file.amp(amp1);
-    file.rate(rate1);
-    file2.amp(amp2);
-    file2.rate(rate2);
+    rate3 = map(widthOfBlob, 424,0, 0, 5);
+    amp3 = map(heightOfBlob, 250, 450, 0, 1);
+    file3.amp(amp3);
+    file3.rate(rate3);
+  } else if (soundNB == 3) {
+    rate4 = map(widthOfBlob, 424, 0, 0, 5);
+    amp4 = map(heightOfBlob, 250, 450, 0, 1);
+    file4.amp(amp4);
+    file4.rate(rate4);
+  } else if (soundNB == 4) {
+    
   }
 }
 
@@ -252,16 +259,20 @@ void playSoundN() {
   } else if (soundNB == 1) {
     file2.loop();
   } else if (soundNB == 2) {
-    //play all
+    file3.loop();
+  } else if (soundNB == 3){
+   file4.loop(); 
   }
 }
 void playSoundP() {
   if (soundNB == 0) {
     file2.stop();
   } else if (soundNB == 1) {
-    //file3.stop();
+    file3.stop();
   } else if (soundNB == 2) {
-    //play all
+    file4.stop();
+  } else if (soundNB == 3){
+   
   }
 }
 
