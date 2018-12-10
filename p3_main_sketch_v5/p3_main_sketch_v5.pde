@@ -18,10 +18,10 @@ int soundNB = 0;
 int timer;
 
 
-float comX, comY;
-
 KinectPV2 kinect;
 BlobDetection BlobDetection;
+
+Camera colorCam;
 
 
 float distanceThreshold, colorThreshold;
@@ -31,15 +31,16 @@ int depth[];
 int widthOfWindow, heightOfWindow;
 
 void setup() {
-  size(512, 424);
   widthOfWindow = 512;
   heightOfWindow = 424;
   //oscP5 = new OscP5(this,12000);
   //pureData = new NetAddress("localhost",8000);
 
   //kinect
+  colorCam = new Camera();
   kinect = new KinectPV2(this);
   kinect.enableDepthImg(true);
+  kinect.enableColorImg(true);
   kinect.init();
 
   //blob detection
@@ -53,6 +54,11 @@ void setup() {
   file3 = new SoundFile(this, "125_guitar2.wav");
   file4 = new SoundFile(this, "100_voice.aif");
   playSoundN();
+  
+}
+
+void settings() {
+  size(512, 424);
 }
 
 void draw() {
@@ -166,33 +172,8 @@ void drawBlobsAndEdges(boolean drawBlobs, boolean drawEdges) {
 
       // Edges
       if (drawEdges) {
-        ArrayList<PVector> edges;
-        edges = findEdgesOfBiggestBlobAndDrawThem(biggestBlob);
-        float sumX = 0;
-        float sumY = 0;
-        float minX = 0;
-        float minY = 0;
-        for (PVector point : edges) {
-          if (minX < point.x || minY < point.y) {
-            minX = point.x;
-            minY = point.y;
-          }
-          sumX += point.x;
-          sumY += point.y;
-        }
+        findEdgesOfBiggestBlobAndDrawThem(biggestBlob);
 
-        int edgeNumber = edges.size();
-        if (frameCount % 20 == 0) {
-
-          comY = sumY/edgeNumber;
-          comX = sumX/edgeNumber;
-          PVector COM = new PVector(comX, comY);
-        }
-        if (comX!=0 && comY !=0) {
-
-          fill(255, 0, 0);
-          ellipse(comX, comY, 8, 8);
-        }
       }
     }
   }
@@ -228,24 +209,27 @@ Blob biggestblob(Blob b) {
 void soundOnCondition(float widthOfBlob, float heightOfBlob) {
   //float widthofk = map(widthOfBlob, 0,1024,0,512);
   //float heightofk = map(heightOfBlob,0,848,0,424);
+  int widthMap = 424*2;
+  int heightMap = 250*2;
+  int maxHeight = 450*2;
   if (soundNB == 0) {
-    rate1 = map(widthOfBlob, 424, 0, 0, 4);
-    amp1 = map(heightOfBlob, 250, 450, 0, 1);
+    rate1 = map(widthOfBlob, widthMap, 0, 0, 4);
+    amp1 = map(heightOfBlob, heightMap, maxHeight, 0, 1);
     file.amp(amp1);
     file.rate(rate1);
   } else if (soundNB == 1) {
-    rate2 = map(widthOfBlob, 424, 0, 0, 4);
-    amp2 = map(heightOfBlob, 250, 450, 0, 1);
+    rate2 = map(widthOfBlob, widthMap, 0, 0, 4);
+    amp2 = map(heightOfBlob, heightMap, maxHeight, 0, 1);
     file2.amp(amp2);
     file2.rate(rate2);
   } else if (soundNB == 2) {
-    rate3 = map(widthOfBlob, 424,0, 0, 4);
-    amp3 = map(heightOfBlob, 250, 450, 0, 1);
+    rate3 = map(widthOfBlob, widthMap,0, 0, 4);
+    amp3 = map(heightOfBlob, heightMap, maxHeight, 0, 1);
     file3.amp(amp3);
     file3.rate(rate3);
   } else if (soundNB == 3) {
-    rate4 = map(widthOfBlob, 424, 0, 0, 4);
-    amp4 = map(heightOfBlob, 250, 450, 0, 1);
+    rate4 = map(widthOfBlob, widthMap, 0, 0, 4);
+    amp4 = map(heightOfBlob, heightMap, maxHeight, 0, 1);
     file4.amp(amp4);
     file4.rate(rate4);
   } else if (soundNB == 4) {
@@ -277,7 +261,7 @@ void playSoundP() {
 }
 
 
-ArrayList<PVector> findEdgesOfBiggestBlobAndDrawThem(Blob biggestBlob) {
+void findEdgesOfBiggestBlobAndDrawThem(Blob biggestBlob) {
   Blob blob;
   EdgeVertex A, B;
   blob = biggestBlob;
@@ -298,5 +282,4 @@ ArrayList<PVector> findEdgesOfBiggestBlobAndDrawThem(Blob biggestBlob) {
       edges.add(new PVector(x2, y2));
     }
   }
-  return edges;
 }
