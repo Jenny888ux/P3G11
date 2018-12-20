@@ -90,7 +90,7 @@ public class FFTSketch extends PApplet {
     float leg1 = map(topPoints[3], 0, 300, -80, 10);
     float leg2 = map(topPoints[4], 0, 300, -80, 10);
     
-    println(topPoints[0]);
+    //println(topPoints[0]);
     //println(topPoints[2]);
     
     //soundFile.setGain(arm1);

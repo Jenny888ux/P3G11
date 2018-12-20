@@ -78,6 +78,7 @@ void draw() {
   drawBlobsAndEdges(true, true);
 
   popMatrix();
+  
 }
 
 //Click on window to see how far away each pixel is from kinect
@@ -216,6 +217,7 @@ Blob biggestblob(Blob b) {
 void soundOnCondition(float widthOfBlob, float heightOfBlob) {
   //float widthofk = map(widthOfBlob, 0,1024,0,512);
   //float heightofk = map(heightOfBlob,0,848,0,424);
+  
 
   float area = widthOfBlob*heightOfBlob;
   float areaMap = map(area, 19000, 150000, 0, 1);

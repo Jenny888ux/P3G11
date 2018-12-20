@@ -37,7 +37,6 @@ void setup() {
   //pureData = new NetAddress("localhost",8000);
 
   //kinect
-  colorCam = new Camera();
   kinect = new KinectPV2(this);
   kinect.enableDepthImg(true);
   kinect.enableColorImg(true);
@@ -71,7 +70,7 @@ void draw() {
     return;
   }
   // threshold min max kinect width kinect height 
-  Threshold(1500, 2000, 512, 424);
+  Threshold(1000, 2500, 512, 424);
 
   //image(display, 0, 0, 1024, 848);
 
@@ -209,9 +208,9 @@ Blob biggestblob(Blob b) {
 void soundOnCondition(float widthOfBlob, float heightOfBlob) {
   //float widthofk = map(widthOfBlob, 0,1024,0,512);
   //float heightofk = map(heightOfBlob,0,848,0,424);
-  int widthMap = 424*2;
-  int heightMap = 250*2;
-  int maxHeight = 450*2;
+  int widthMap = 424;
+  int heightMap = 250;
+  int maxHeight = 450;
   if (soundNB == 0) {
     rate1 = map(widthOfBlob, widthMap, 0, 0, 4);
     amp1 = map(heightOfBlob, heightMap, maxHeight, 0, 1);
