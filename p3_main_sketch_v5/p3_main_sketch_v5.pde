@@ -98,7 +98,7 @@ void mouseClicked() {
   print("Meter away from camera: " + depthLookUpTable(j));
 }
 
-void mousePressed() {
+void mousePressed() { //inbuilt event function
   if (mouseButton == LEFT) {
     soundNB++;
     playSoundN();

@@ -34,7 +34,9 @@ void setup() {
 
   //blob detection
   BlobDetection = new BlobDetection(512, 424);
+  //Default is check dark areas, apparently redundant
   BlobDetection.setPosDiscrimination(false);
+  //used for finding pixel luminocity 1=white, if less than 1 then it detecs the pixel
   BlobDetection.setThreshold(1f);
   
   //sound
@@ -62,7 +64,7 @@ void draw() {
 
   pushMatrix();
   translate(0, 0);
-
+  //find blobs in this image (BlobImage)
   BlobDetection.computeBlobs(BlobImage.pixels);
 
   image(display, 0, 0, widthOfWindow, heightOfWindow);
@@ -122,15 +124,18 @@ public float rawDepthToMeters(int depthValue) {
 void drawBlobsAndEdges(boolean drawBlobs)
 {
   noFill();
+  //Create arralist of blobs
   ArrayList<Blob> blobs = new ArrayList<Blob>();
+  //loop through all pixels, return number of blobs, BlobDetection.getBLobNb = max no. Blobs infront of kinect on the image
   for (int n = 0; n < BlobDetection.getBlobNb(); n++)
-  {
+  { //add all found blobs to blobs array
     blobs.add(BlobDetection.getBlob(n));
   }
 
   Blob biggestBlob = null;
+  //This array takes a blob and the size of the blob (int), if size larger than 20000 then add to blobsOfSize array
   ArrayList<Blob> blobsOfSize = arrayListofBlobs(blobs, 20000);
-
+  //loops through all blobs in the array blobsOfSize --> transfer as argument into the function biggestblob. biggestBlob is a variabel of a blobtype.
   if (blobsOfSize != null) {
     for (Blob b : blobsOfSize) {
       biggestBlob = biggestblob(b);
@@ -142,13 +147,13 @@ void drawBlobsAndEdges(boolean drawBlobs)
     if (drawBlobs)
     {
       strokeWeight(4);
-      stroke(255, 0, 0);
+      stroke(255, 0, 0); //BlobDetection lib normalizes values why we need to multiply with width and/or height. Same with minX etc.
       rect(biggestBlob.xMin*widthOfWindow, biggestBlob.yMin*heightOfWindow, biggestBlob.w*widthOfWindow, biggestBlob.h*heightOfWindow);
       soundOnCondition(biggestBlob.w*widthOfWindow,biggestBlob.h*heightOfWindow);
   }
   }
 }
-
+//Only gets large blobs and discards smaller than 20000
 ArrayList<Blob> arrayListofBlobs(ArrayList<Blob> blobs_, int size) {
   ArrayList<Blob> blobsOfSize = new ArrayList<Blob>();
   if (blobs_ != null) {

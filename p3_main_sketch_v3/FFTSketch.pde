@@ -1,15 +1,15 @@
 import ddf.minim.*;
 import ddf.minim.analysis.*;
 
-public class FFTSketch extends PApplet {
+public class FFTSketch extends PApplet { //PApplet is processings way of saying that this class should be run as a default class
   int[] topPoints;
   ArrayList<Integer> distanceArrayShort;
 
-  public FFTSketch() {
-    PApplet.runSketch(new String[]{this.getClass().getSimpleName()}, this);
+  public FFTSketch() { //Contructor
+    PApplet.runSketch(new String[]{this.getClass().getSimpleName()}, this); //When created run the whole class
   }
 
-  public void settings() {
+  public void settings() { //basicly a setup, sets parameters for how the window should look (size)
     size(600, 400);
   }
 
@@ -23,25 +23,25 @@ public class FFTSketch extends PApplet {
     stroke(255);
 
     if (distanceArray != null) {
-      distanceArrayShort.clear();
+      distanceArrayShort.clear(); //We only want to look at values for every 100th value
       int size = distanceArray.size();
       for (int i = 0; i < distanceArray.size(); i+=100) {
 
         int temp = distanceArray.get(i);
-
-        int m = int(map(temp, 0, 400, 0, height));
+      //(map(variable we are changing, min. value the variable can be, variable max value, the lowest value we want to map the variable to, the maximum value we want to map to
+        int m = int(map(temp, 0, 400, 0, height)); //Heigth of each line is mapped from 0-height but they are displayed from 0-400. --> Scaling
         int plotVar = height-m;
         stroke(255, 0, 0);
-        int x = int(map(i, 1, size, 0, width));
+        int x = int(map(i, 1, size, 0, width)); 
         line(x, height, x, plotVar);
-        distanceArrayShort.add(plotVar);
+        distanceArrayShort.add(plotVar); //variable added to distanceArrayShort
       }
       drawGraph(size);
-      findTopPoints(distanceArrayShort);
+      findTopPoints(distanceArrayShort); 
       changeSound();
     }
   }
-  void drawGraph(float size) {
+  void drawGraph(float size) { //loops through x an y axis. Draws lines of the graph (the grid)
 
     for (int i = 0; i <= size; i += 50) {
 
@@ -58,7 +58,7 @@ public class FFTSketch extends PApplet {
     }
   }
 
-  void findTopPoints(ArrayList<Integer> distanceArray) {
+  void findTopPoints(ArrayList<Integer> distanceArray) { //Not done
     int j = 0;
     topPoints = new int[100];
     for (int i = 1; i < distanceArray.size(); i++) {

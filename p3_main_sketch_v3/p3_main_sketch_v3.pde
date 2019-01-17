@@ -51,7 +51,7 @@ void setup() {
 
   //sound
 
-  FFTSketch FFTWin = new FFTSketch();
+  FFTSketch FFTWin = new FFTSketch(); //Create new window in order not to do blob detection on the graph
   distanceArray  = new ArrayList();
   soundFile.loop();
 }
@@ -181,7 +181,7 @@ void drawBlobsAndEdges(boolean drawBlobs, boolean drawEdges) {
           comY = sumY/edgeNumber;
           comX = sumX/edgeNumber;
           PVector COM = new PVector(comX, comY);
-          distance(COM, edgeNumber, edges);
+          distance(COM, edgeNumber, edges); //find distances between COM and edges --> distance into array
         }
         if (comX!=0 && comY !=0) {
 
@@ -267,12 +267,12 @@ void distance(PVector COM, int edgeNumber, ArrayList<PVector> edges) {
     float b = pow((y2 - y1), 2);
     float d = sqrt(a + b);
     int distance = int(d);
-    if (i > edgeNumber) {
+    if (i > edgeNumber) { //less edges than previous frame --> delete them
       distanceArray.remove(i);
       i--;
     } else if (distanceArray.size()-1 > i) {
-      distanceArray.set(i, distance);
-    } else {
+      distanceArray.set(i, distance); 
+    } else { 
       distanceArray.add(distance);
     }
   }

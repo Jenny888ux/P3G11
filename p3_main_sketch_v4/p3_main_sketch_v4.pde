@@ -220,7 +220,7 @@ void soundOnCondition(float widthOfBlob, float heightOfBlob) {
   
 
   float area = widthOfBlob*heightOfBlob;
-  float areaMap = map(area, 19000, 150000, 0, 1);
+  float areaMap = map(area, 19000, 150000, 0, 1); //Lowest possible area we could produce is set as min. (19000) while the largest is set to max. (150000) 
   //println(area);
   //println(areaMap);
   room = areaMap;
@@ -241,7 +241,7 @@ void soundOnCondition(float widthOfBlob, float heightOfBlob) {
 
 void delay(float widthOfBlob, float heightOfBlob) {
   if (points == null)
-    points.add(new Point(widthOfBlob, heightOfBlob));
+    points.add(new Point(widthOfBlob, heightOfBlob)); //points: width and height of BLOB
   if (points.size() < 5) {
     points.add(new Point(widthOfBlob, heightOfBlob));
   } else {
@@ -249,7 +249,7 @@ void delay(float widthOfBlob, float heightOfBlob) {
   }
   println(points.get(0).compareXY(points.get(points.size()-1)));
 
-  if (points.get(0).compareXY(points.get(points.size()-1)) > 135) {
+  if (points.get(0).compareXY(points.get(points.size()-1)) > 135) { //135 = min. acceleration in order to produce effect
     delayAmount = map(points.get(0).compareXY(points.get(points.size()-1)), 120, 200, 0,1);
     delay.process(file,1);
     delay.feedback(delayAmount);
@@ -257,7 +257,7 @@ void delay(float widthOfBlob, float heightOfBlob) {
   }
   
   if (timer > 200)
-    delay.feedback(0);
+    delay.feedback(0); //remove previous delays inorder not to stack them
   timer++;
 }
 
